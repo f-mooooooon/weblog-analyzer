@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    /* ── 스택 대신 힙에 할당 (구조체가 너무 커서 스택 오버플로우 방지) ── */
+    /* 스택 대신 힙에 할당 (구조체가 너무 커서 스택 오버플로우 방지) */
     AnalysisContext* ctx = (AnalysisContext*)malloc(sizeof(AnalysisContext));
     if (!ctx) {
         fprintf(stderr, "Error: memory allocation failed\n");

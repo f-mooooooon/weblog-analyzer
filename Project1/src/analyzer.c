@@ -5,10 +5,7 @@
 
 #include "analyzer.h"
 
-/* ───────────────────────────────────────────
-   해시 함수: 문자열 → 버킷 인덱스
-   (djb2 알고리즘 - 간단하고 분포가 좋음)
-─────────────────────────────────────────── */
+/* 해시 함수: djb2 알고리즘 - 간단하고 분포가 좋음 */
 static unsigned int hash_str(const char *str)
 {
     unsigned int hash = 5381;
@@ -19,18 +16,13 @@ static unsigned int hash_str(const char *str)
     return hash % HASH_SIZE;
 }
 
-/* ───────────────────────────────────────────
-   init_context()
-   AnalysisContext를 전부 0으로 초기화
-─────────────────────────────────────────── */
+/* init_context() - AnalysisContext를 전부 0으로 초기화 */
 void init_context(AnalysisContext *ctx)
 {
     memset(ctx, 0, sizeof(AnalysisContext));
 }
 
-/* ───────────────────────────────────────────
-   내부 헬퍼: IP 해시맵에 카운트 +1
-─────────────────────────────────────────── */
+/* 내부 헬퍼: IP 해시맵에 카운트 +1 */
 static void count_ip(AnalysisContext *ctx, const char *ip)
 {
     unsigned int idx = hash_str(ip);
@@ -55,9 +47,7 @@ static void count_ip(AnalysisContext *ctx, const char *ip)
     ctx->ip_table[idx] = new_node;
 }
 
-/* ───────────────────────────────────────────
-   내부 헬퍼: URL 해시맵에 카운트 +1
-─────────────────────────────────────────── */
+/* 내부 헬퍼: URL 해시맵에 카운트 +1 */
 static void count_url(AnalysisContext *ctx, const char *url)
 {
     unsigned int idx = hash_str(url);
@@ -80,9 +70,7 @@ static void count_url(AnalysisContext *ctx, const char *url)
     ctx->url_table[idx] = new_node;
 }
 
-/* ───────────────────────────────────────────
-   내부 헬퍼: 상태코드 카운트 누적
-─────────────────────────────────────────── */
+/* 내부 헬퍼: 상태코드 카운트 누적 */
 static void count_status(AnalysisContext *ctx, int status)
 {
     /* 범위 체크: 100~599만 유효 */
@@ -98,10 +86,7 @@ static void count_status(AnalysisContext *ctx, int status)
     else                   ctx->status.s5xx++;
 }
 
-/* ───────────────────────────────────────────
-   analyze_entry()
-   LogEntry 하나를 받아 모든 통계에 반영
-─────────────────────────────────────────── */
+/* analyze_entry() - LogEntry 하나를 받아 모든 통계에 반영 */
 void analyze_entry(AnalysisContext *ctx, const LogEntry *entry)
 {
     /* IP 통계 */
@@ -124,19 +109,13 @@ void analyze_entry(AnalysisContext *ctx, const LogEntry *entry)
     }
 }
 
-/* ───────────────────────────────────────────
-   finalize_analysis()
-   현재는 후처리 없음 — 필요 시 정렬 등 추가
-─────────────────────────────────────────── */
+/* finalize_analysis() - 현재는 후처리 없음 — 필요 시 정렬 등 추가 */
 void finalize_analysis(AnalysisContext *ctx)
 {
     (void)ctx;  /* 미사용 경고 방지 */
 }
 
-/* ───────────────────────────────────────────
-   free_context()
-   malloc으로 만든 해시맵 노드들 전부 해제
-─────────────────────────────────────────── */
+/* free_context() - malloc으로 만든 해시맵 노드들 전부 해제 */
 void free_context(AnalysisContext *ctx)
 {
     /* IP 해시맵 해제 */
